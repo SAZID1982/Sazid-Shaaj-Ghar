@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,32 +30,40 @@
   <header>
     <h1>Sazid Shaaj Ghar</h1>
     <p>Event Management & Flower Decoration</p>
-  </header>  <section class="products" id="product-list"></section>  <section class="product-detail" id="product-detail">
+  </header>
+  <section class="products" id="product-list">
+    <!-- Product List -->
+    <div class="product">
+      <img src="https://drive.google.com/uc?export=view&id=1VtJ41hcf7c5BGqnzOHjdhiTpKt7GPpmW" alt="স্টেজ" />
+      <h3>স্টেজ</h3>
+    </div>
+    <!-- Add other products here -->
+  </section>
+
+  <section class="product-detail" id="product-detail">
     <button class="back" onclick="goBack()">← Back</button>
     <h2 id="detail-title"></h2>
     <img id="detail-image" src="" alt="Product" style="width:100%; max-width:400px; margin:auto;">
     <div class="designs" id="designs"></div>
     <input type="file" id="custom-design" accept="image/*" onchange="uploadCustom()"><div class="datetime-label">When is it needed?</div>
-<input class="datetime-input" type="datetime-local" id="need-date-time" />
+    <input class="datetime-input" type="datetime-local" id="need-date-time" />
+    <div class="datetime-label">Delivery Option</div>
+    <select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
+      <option value="Takeaway">Takeaway</option>
+      <option value="Delivery">Delivery</option>
+    </select>
+    <div id="location-info"></div>
+    <input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
+    <div class="buttons">
+      <button class="add" onclick="addToCart()">Add to Cart</button>
+      <button class="buy" onclick="buyNow()">Buy Now</button>
+    </div>
+  </section>
 
-<div class="datetime-label">Delivery Option</div>
-<select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
-  <option value="Takeaway">Takeaway</option>
-  <option value="Delivery">Delivery</option>
-</select>
-
-<div id="location-info"></div>
-<input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
-
-<div class="buttons">
-  <button class="add" onclick="addToCart()">Add to Cart</button>
-  <button class="buy" onclick="buyNow()">Buy Now</button>
-</div>
-
-  </section>  <script>
+  <script>
     const products = [
+      { name: "স্টেজ", img: "https://drive.google.com/uc?export=view&id=1VtJ41hcf7c5BGqnzOHjdhiTpKt7GPpmW" },
       { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর" },
-      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ" },
       { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল" },
       { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা" },
       { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি" },
@@ -142,21 +151,3 @@
       const deliveryOption = document.getElementById("delivery-option").value;
       const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
       alert(`${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
-      goBack();
-    }
-
-    function buyNow() {
-      const currentTime = getCurrentDateTime();
-      const needDateTime = document.getElementById("need-date-time").value;
-      const deliveryOption = document.getElementById("delivery-option").value;
-      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
-      alert(`Buying ${selectedProduct.name}\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
-      goBack();
-    }
-
-    function goBack() {
-      productDetail.classList.remove("active");
-      document.getElementById("product-list").style.display = "grid";
-    }
-  </script></body>
-  </html>
