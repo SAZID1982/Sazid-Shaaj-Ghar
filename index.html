@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,117 +45,126 @@
     <div class="designs" id="designs"></div>
     <input type="file" id="custom-design" accept="image/*" onchange="uploadCustom()">
     <div class="datetime-label">When is it needed?</div>
-    <input class="datetime-input" type="datetime-local" id="need-date-time" />
-    <div class="datetime-label">Delivery Option</div>
-    <select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
-      <option value="Takeaway">Takeaway</option>
-      <option value="Delivery">Delivery</option>
-    </select>
-    <div id="location-info"></div>
-    <input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
-    <div class="buttons">
-      <button class="add" onclick="sendToWhatsApp('cart')">Add to Cart</button>
-      <button class="buy" onclick="sendToWhatsApp('buy')">Buy Now</button>
-    </div>
-  </section>
+    <input class="datetime-input" type="datetime-local" id="need-date-time" /><div class="datetime-label">Delivery Option</div>
+<select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
+  <option value="Takeaway">Takeaway</option>
+  <option value="Delivery">Delivery</option>
+</select>
+
+<div id="location-info"></div>
+<input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
+
+<div class="buttons">
+  <button class="add" onclick="addToCart()">Add to Cart</button>
+  <button class="buy" onclick="buyNow()">Buy Now</button>
+</div>
+
+  </section>  
   <script>
     const products = [
-      { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর" },
-      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ" },
-      { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল" },
-      { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা" },
-      { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি" },
-      { name: "মালা", img: "https://via.placeholder.com/300x200?text=মালা" },
-      { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=ফুলের+ঝুড়ি" },
-      { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=ইভেন্ট+ম্যানেজমেন্ট" },
-      { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=গায়ে+হলুদ" },
-      { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=বার্থডে" }
-    ];const stageDesigns = [
-  "1VCSIcH57ykeOUVAjiySmsYzUaRK-Fvmi",
-  "1VWiGHxxmwBYQrRJHlkl6hx-v76wltZug",
-  "1VWdX_B7O_bjkp14DsPpI8jSosp8t8vlS",
-  "1VWAeuizTBLzgCNIHoNoidYSUJ-dCPzQa",
-  "1VTgeoiEeDgUdHVqe7py-0IuQqkhwOV07"
-];
+      { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=Decor+Wedding" },
+      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=Stage+Decoration" },
+      { name: "ফুল", img: "https://via.placeholder.com/300x200?text=Flower+Arrangement" },
+      { name: "তোরা", img: "https://via.placeholder.com/300x200?text=Torah+Decoration" },
+      { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=Car+Decoration" },
+      { name: "মালা", img: "https://via.placeholder.com/300x200?text=Mala+Decoration" },
+      { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=Flower+Basket" },
+      { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=Event+Management" },
+      { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=Gaye+Holud" },
+      { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=Birthday+Decoration" }
+    ];
 
-let selectedProduct = null;
-let selectedDesignIndex = null;
+    const stageDesigns = [
+      "https://via.placeholder.com/100x100?text=Design+1",
+      "https://via.placeholder.com/100x100?text=Design+2",
+      "https://via.placeholder.com/100x100?text=Design+3",
+      "https://via.placeholder.com/100x100?text=Design+4",
+      "https://via.placeholder.com/100x100?text=Design+5"
+    ];
 
-const productList = document.getElementById("product-list");
-const productDetail = document.getElementById("product-detail");
+    let selectedProduct = null;
+    let selectedDesign = null;
 
-products.forEach((product, index) => {
-  const div = document.createElement("div");
-  div.className = "product";
-  div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
-  div.onclick = () => showProduct(index);
-  productList.appendChild(div);
-});
+    const productList = document.getElementById("product-list");
+    const productDetail = document.getElementById("product-detail");
+    const locationInfo = document.getElementById("location-info");
+    const customLocationInput = document.getElementById("custom-location");
 
-function showProduct(index) {
-  selectedProduct = products[index];
-  selectedDesignIndex = null;
-  document.getElementById("detail-title").innerText = selectedProduct.name;
-  document.getElementById("detail-image").src = selectedProduct.img;
-  document.getElementById("product-list").style.display = "none";
-  productDetail.classList.add("active");
-  const designContainer = document.getElementById("designs");
-  if (selectedProduct.name === "স্টেজ") {
-    designContainer.innerHTML = stageDesigns.map((id, i) => `<img src="https://drive.google.com/uc?id=${id}" onclick="selectDesign(${i})" title="স্টেজ ${i+1}" />`).join("");
-  } else {
-    designContainer.innerHTML = "";
-  }
-}
+    products.forEach((product, index) => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
+      div.onclick = () => showProduct(index);
+      productList.appendChild(div);
+    });
 
-function selectDesign(index) {
-  document.querySelectorAll(".designs img").forEach((img, i) => {
-    img.classList.toggle("selected", i === index);
-  });
-  selectedDesignIndex = index;
-}
+    function showProduct(index) {
+      selectedProduct = products[index];
+      selectedDesign = null;
+      document.getElementById("detail-title").innerText = selectedProduct.name;
+      document.getElementById("detail-image").src = selectedProduct.img;
+      document.getElementById("product-list").style.display = "none";
+      productDetail.classList.add("active");
 
-function uploadCustom() {
-  const file = document.getElementById("custom-design").files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      selectedDesignIndex = "Custom";
-    };
-    reader.readAsDataURL(file);
-  }
-}
+      const designContainer = document.getElementById("designs");
+      const designList = selectedProduct.name === "স্টেজ" ? stageDesigns : [];
+      designContainer.innerHTML = designList.map((d, i) => `<img src="${d}" onclick="selectDesign(this)" data-design="${i+1}" />`).join("");
 
-function handleDeliveryOption() {
-  const option = document.getElementById("delivery-option").value;
-  const locationInfo = document.getElementById("location-info");
-  const locationInput = document.getElementById("custom-location");
-  if (option === "Takeaway") {
-    locationInfo.innerHTML = `Pickup Location: <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" target="_blank">View on Map</a>`;
-    locationInput.style.display = "none";
-  } else {
-    locationInfo.innerText = "Enter your address below:";
-    locationInput.style.display = "block";
-  }
-}
+      document.getElementById("need-date-time").value = "";
+      document.getElementById("delivery-option").value = "Takeaway";
+      handleDeliveryOption();
+    }
 
-function sendToWhatsApp(action) {
-  const needDateTime = document.getElementById("need-date-time").value;
-  const deliveryOption = document.getElementById("delivery-option").value;
-  const location = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
-  let message = `New Order (${action.toUpperCase()}):\nProduct: ${selectedProduct.name}\n`;
-  if (selectedDesignIndex !== null) {
-    message += `Design: ${selectedProduct.name} ${selectedDesignIndex + 1}\n`;
-  }
-  message += `Need On: ${needDateTime}\nDelivery: ${deliveryOption}\nLocation: ${location}`;
-  window.open(`https://wa.me/8801840117711?text=${encodeURIComponent(message)}`);
-  goBack();
-}
+    function selectDesign(imgElement) {
+      document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
+      imgElement.classList.add("selected");
+      selectedDesign = imgElement.dataset.design;
+    }
 
-function goBack() {
-  productDetail.classList.remove("active");
-  document.getElementById("product-list").style.display = "grid";
-}
+    function uploadCustom() {
+      const file = document.getElementById("custom-design").files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedDesign = e.target.result;
+          document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
+    function handleDeliveryOption() {
+      const option = document.getElementById("delivery-option").value;
+      if (option === "Takeaway") {
+        locationInfo.innerHTML = `Pickup Location: <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" target="_blank">View on Map</a>`;
+        customLocationInput.style.display = "none";
+      } else {
+        locationInfo.innerHTML = "Enter your address below:";
+        customLocationInput.style.display = "block";
+      }
+    }
+
+    function getCurrentDateTime() {
+      const now = new Date();
+      return now.toLocaleString();
+    }
+
+    function addToCart() {
+      const currentTime = getCurrentDateTime();
+      const needDateTime = document.getElementById("need-date-time").value;
+      const deliveryOption = document.getElementById("delivery-option").value;
+      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
+      alert(`${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Design ' + selectedDesign : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${userLocation}`);
+    }
+
+    function buyNow() {
+      addToCart();
+    }
+
+    function goBack() {
+      document.getElementById("product-list").style.display = "grid";
+      productDetail.classList.remove("active");
+    }
   </script>
 </body>
 </html>
