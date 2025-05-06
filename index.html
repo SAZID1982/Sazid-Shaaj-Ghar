@@ -57,14 +57,11 @@
       <button class="add" onclick="addToCart()">Add to Cart</button>
       <button class="buy" onclick="buyNow()">Buy Now</button>
     </div>
-  </section>  
-
+  </section>
   <script>
     const products = [
       { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর" },
-      { name: "স্টেজ 1", img: "https://via.placeholder.com/300x200?text=স্টেজ+1" },
-      { name: "স্টেজ 2", img: "https://via.placeholder.com/300x200?text=স্টেজ+2" },
-      { name: "স্টেজ 3", img: "https://via.placeholder.com/300x200?text=স্টেজ+3" },
+      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ" },
       { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল" },
       { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা" },
       { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি" },
@@ -80,7 +77,17 @@
       "https://drive.google.com/uc?id=1VWiGHxxmwBYQrRJHlkl6hx-v76wltZug",
       "https://drive.google.com/uc?id=1VWdX_B7O_bjkp14DsPpI8jSosp8t8vlS",
       "https://drive.google.com/uc?id=1VWAeuizTBLzgCNIHoNoidYSUJ-dCPzQa",
-      "https://drive.google.com/uc?id=1VTgeoiEeDgUdHVqe7py-0IuQqkhwOV07"
+      "https://drive.google.com/uc?id=1VTgeoiEeDgUdHVqe7py-0IuQqkhwOV07",
+      "https://drive.google.com/uc?id=1VCC015Pv3QlfXJXOtTp0iIn8O7MfGiNX",
+      "https://drive.google.com/uc?id=1V5rSan_kiKe1PPRjF6IZWen_msY1Slsg",
+      "https://drive.google.com/uc?id=1VkxPojkLh_cLWJzZkJFitj_bccVi5nW2",
+      "https://drive.google.com/uc?id=1V4FOogD4572PiPmKwdBiY9mZzcAa4NZG",
+      "https://drive.google.com/uc?id=1Uz3UV8gSa1FnhpHA_bCE5IBdVSJggpGh",
+      "https://drive.google.com/uc?id=1UqpvLkAGsmnssoyw58mmCaFwqdNWnzDr",
+      "https://drive.google.com/uc?id=1W3bdPDieonX4TrQQRDAuWqY_Gws2FUwK",
+      "https://drive.google.com/uc?id=1UtoUYvScr1BCUkZokigO3TXOa7OsYSgX",
+      "https://drive.google.com/uc?id=1UxgBKqZttqciarzlbYugS4EesTLAxwcw",
+      "https://drive.google.com/uc?id=1VtJ41hcf7c5BGqnzOHjdhiTpKt7GPpmW"
     ];
 
     let selectedProduct = null;
@@ -108,18 +115,18 @@
       productDetail.classList.add("active");
 
       const designContainer = document.getElementById("designs");
-      const designList = selectedProduct.name.startsWith("স্টেজ") ? stageDesigns : [];
-      designContainer.innerHTML = designList.map(d => `<img src="${d}" onclick="selectDesign(this)" />`).join("");
+      const designList = selectedProduct.name === "স্টেজ" ? stageDesigns : [];
+      designContainer.innerHTML = designList.map((d, i) => `<img src="${d}" onclick="selectDesign(this, ${i + 1})" />`).join("");
 
       document.getElementById("need-date-time").value = "";
       document.getElementById("delivery-option").value = "Takeaway";
       handleDeliveryOption();
     }
 
-    function selectDesign(imgElement) {
+    function selectDesign(imgElement, designNumber) {
       document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
       imgElement.classList.add("selected");
-      selectedDesign = imgElement.src;
+      selectedDesign = { designNumber, url: imgElement.src };
     }
 
     function uploadCustom() {
@@ -127,7 +134,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          selectedDesign = e.target.result;
+          selectedDesign = { designNumber: "Custom", url: e.target.result };
           document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
         };
         reader.readAsDataURL(file);
@@ -150,26 +157,24 @@
       return now.toLocaleString();
     }
 
-    function sendOrderToWhatsApp(orderDetails) {
-      const whatsappMessage = `Order Details:\n${orderDetails}`;
-      const whatsappURL = `https://wa.me/+8801840117711?text=${encodeURIComponent(whatsappMessage)}`;
-      window.open(whatsappURL, '_blank');
-    }
-
     function addToCart() {
       const currentTime = getCurrentDateTime();
       const needDateTime = document.getElementById("need-date-time").value;
       const deliveryOption = document.getElementById("delivery-option").value;
       const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
-      const orderDetails = `${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`;
-      
-      sendOrderToWhatsApp(orderDetails);
+      const designInfo = selectedDesign ? `Design: ${selectedProduct.name} - Design ${selectedDesign.designNumber}` : 'No design selected';
+      alert(`${selectedProduct.name} added to cart.\n${designInfo}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
       goBack();
     }
 
     function buyNow() {
-      addToCart();
-      alert("Order placed successfully!");
+      const currentTime = getCurrentDateTime();
+      const needDateTime = document.getElementById("need-date-time").value;
+      const deliveryOption = document.getElementById("delivery-option").value;
+      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
+      const designInfo = selectedDesign ? `Design: ${selectedProduct.name} - Design ${selectedDesign.designNumber}` : 'No design selected';
+      alert(`Buying ${selectedProduct.name}\n${designInfo}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
+      goBack();
     }
 
     function goBack() {
@@ -178,4 +183,4 @@
     }
   </script>
 </body>
-</html>
+      </html>
