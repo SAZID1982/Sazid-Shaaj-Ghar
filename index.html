@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -45,144 +44,117 @@
     <div class="designs" id="designs"></div>
     <input type="file" id="custom-design" accept="image/*" onchange="uploadCustom()">
     <div class="datetime-label">When is it needed?</div>
-    <input class="datetime-input" type="datetime-local" id="need-date-time" /><div class="datetime-label">Delivery Option</div>
-<select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
-  <option value="Takeaway">Takeaway</option>
-  <option value="Delivery">Delivery</option>
-</select>
+    <input class="datetime-input" type="datetime-local" id="need-date-time" />
+    <div class="datetime-label">Delivery Option</div>
+    <select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
+      <option value="Takeaway">Takeaway</option>
+      <option value="Delivery">Delivery</option>
+    </select>
+    <div id="location-info"></div>
+    <input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
+    <div class="buttons">
+      <button class="add" onclick="sendToWhatsApp('cart')">Add to Cart</button>
+      <button class="buy" onclick="sendToWhatsApp('buy')">Buy Now</button>
+    </div>
+  </section>
+  <script>
+    const products = [
+      { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর" },
+      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ" },
+      { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল" },
+      { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা" },
+      { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি" },
+      { name: "মালা", img: "https://via.placeholder.com/300x200?text=মালা" },
+      { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=ফুলের+ঝুড়ি" },
+      { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=ইভেন্ট+ম্যানেজমেন্ট" },
+      { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=গায়ে+হলুদ" },
+      { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=বার্থডে" }
+    ];const stageDesigns = [
+  "1VCSIcH57ykeOUVAjiySmsYzUaRK-Fvmi",
+  "1VWiGHxxmwBYQrRJHlkl6hx-v76wltZug",
+  "1VWdX_B7O_bjkp14DsPpI8jSosp8t8vlS",
+  "1VWAeuizTBLzgCNIHoNoidYSUJ-dCPzQa",
+  "1VTgeoiEeDgUdHVqe7py-0IuQqkhwOV07"
+];
 
-<div id="location-info"></div>
-<input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
+let selectedProduct = null;
+let selectedDesignIndex = null;
 
-<div class="buttons">
-  <button class="add" onclick="addToCart()">Add to Cart</button>
-  <button class="buy" onclick="buyNow()">Buy Now</button>
-</div>
+const productList = document.getElementById("product-list");
+const productDetail = document.getElementById("product-detail");
 
-  </section>  
-<script>
-  const phoneNumber = '8801840117711'; // Your WhatsApp number with country code without '+'
+products.forEach((product, index) => {
+  const div = document.createElement("div");
+  div.className = "product";
+  div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
+  div.onclick = () => showProduct(index);
+  productList.appendChild(div);
+});
 
-  const products = [
-    { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর" },
-    { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ" },
-    { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল" },
-    { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা" },
-    { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি" },
-    { name: "মালা", img: "https://via.placeholder.com/300x200?text=মালা" },
-    { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=ফুলের+ঝুড়ি" },
-    { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=ইভেন্ট+ম্যানেজমেন্ট" },
-    { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=গায়ে+হলুদ" },
-    { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=বার্থডে" }
-  ];
+function showProduct(index) {
+  selectedProduct = products[index];
+  selectedDesignIndex = null;
+  document.getElementById("detail-title").innerText = selectedProduct.name;
+  document.getElementById("detail-image").src = selectedProduct.img;
+  document.getElementById("product-list").style.display = "none";
+  productDetail.classList.add("active");
+  const designContainer = document.getElementById("designs");
+  if (selectedProduct.name === "স্টেজ") {
+    designContainer.innerHTML = stageDesigns.map((id, i) => `<img src="https://drive.google.com/uc?id=${id}" onclick="selectDesign(${i})" title="স্টেজ ${i+1}" />`).join("");
+  } else {
+    designContainer.innerHTML = "";
+  }
+}
 
-  const stageDesigns = [
-    "https://drive.google.com/uc?id=1VCSIcH57ykeOUVAjiySmsYzUaRK-Fvmi",
-    "https://drive.google.com/uc?id=1VWiGHxxmwBYQrRJHlkl6hx-v76wltZug",
-    "https://drive.google.com/uc?id=1VWdX_B7O_bjkp14DsPpI8jSosp8t8vlS",
-    "https://drive.google.com/uc?id=1VWAeuizTBLzgCNIHoNoidYSUJ-dCPzQa",
-    "https://drive.google.com/uc?id=1VTgeoiEeDgUdHVqe7py-0IuQqkhwOV07",
-    "https://drive.google.com/uc?id=1VCC015Pv3QlfXJXOtTp0iIn8O7MfGiNX",
-    "https://drive.google.com/uc?id=1V5rSan_kiKe1PPRjF6IZWen_msY1Slsg",
-    "https://drive.google.com/uc?id=1VkxPojkLh_cLWJzZkJFitj_bccVi5nW2",
-    "https://drive.google.com/uc?id=1V4FOogD4572PiPmKwdBiY9mZzcAa4NZG",
-    "https://drive.google.com/uc?id=1Uz3UV8gSa1FnhpHA_bCE5IBdVSJggpGh",
-    "https://drive.google.com/uc?id=1UqpvLkAGsmnssoyw58mmCaFwqdNWnzDr",
-    "https://drive.google.com/uc?id=1W3bdPDieonX4TrQQRDAuWqY_Gws2FUwK",
-    "https://drive.google.com/uc?id=1UtoUYvScr1BCUkZokigO3TXOa7OsYSgX",
-    "https://drive.google.com/uc?id=1UxgBKqZttqciarzlbYugS4EesTLAxwcw",
-    "https://drive.google.com/uc?id=1VtJ41hcf7c5BGqnzOHjdhiTpKt7GPpmW"
-  ];
-
-  let selectedProduct = null;
-  let selectedDesign = null;
-
-  const productList = document.getElementById("product-list");
-  const productDetail = document.getElementById("product-detail");
-  const locationInfo = document.getElementById("location-info");
-  const customLocationInput = document.getElementById("custom-location");
-
-  products.forEach((product, index) => {
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
-    div.onclick = () => showProduct(index);
-    productList.appendChild(div);
+function selectDesign(index) {
+  document.querySelectorAll(".designs img").forEach((img, i) => {
+    img.classList.toggle("selected", i === index);
   });
+  selectedDesignIndex = index;
+}
 
-  function showProduct(index) {
-    selectedProduct = products[index];
-    selectedDesign = null;
-    document.getElementById("detail-title").innerText = selectedProduct.name;
-    document.getElementById("detail-image").src = selectedProduct.img;
-    document.getElementById("product-list").style.display = "none";
-    productDetail.classList.add("active");
-
-    const designContainer = document.getElementById("designs");
-    const designList = selectedProduct.name === "স্টেজ" ? stageDesigns : [];
-    designContainer.innerHTML = designList.map((d, i) => `<img src="${d}" onclick="selectDesign(this, ${i + 1})" />`).join("");
-
-    document.getElementById("need-date-time").value = "";
-    document.getElementById("delivery-option").value = "Takeaway";
-    handleDeliveryOption();
+function uploadCustom() {
+  const file = document.getElementById("custom-design").files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      selectedDesignIndex = "Custom";
+    };
+    reader.readAsDataURL(file);
   }
+}
 
-  function selectDesign(imgElement, designNumber) {
-    document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
-    imgElement.classList.add("selected");
-    selectedDesign = { src: imgElement.src, designNumber: designNumber };
+function handleDeliveryOption() {
+  const option = document.getElementById("delivery-option").value;
+  const locationInfo = document.getElementById("location-info");
+  const locationInput = document.getElementById("custom-location");
+  if (option === "Takeaway") {
+    locationInfo.innerHTML = `Pickup Location: <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" target="_blank">View on Map</a>`;
+    locationInput.style.display = "none";
+  } else {
+    locationInfo.innerText = "Enter your address below:";
+    locationInput.style.display = "block";
   }
+}
 
-  function uploadCustom() {
-    const file = document.getElementById("custom-design").files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        selectedDesign = { src: e.target.result, designNumber: 'Custom' };
-        document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
-      };
-      reader.readAsDataURL(file);
-    }
+function sendToWhatsApp(action) {
+  const needDateTime = document.getElementById("need-date-time").value;
+  const deliveryOption = document.getElementById("delivery-option").value;
+  const location = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
+  let message = `New Order (${action.toUpperCase()}):\nProduct: ${selectedProduct.name}\n`;
+  if (selectedDesignIndex !== null) {
+    message += `Design: ${selectedProduct.name} ${selectedDesignIndex + 1}\n`;
   }
+  message += `Need On: ${needDateTime}\nDelivery: ${deliveryOption}\nLocation: ${location}`;
+  window.open(`https://wa.me/8801840117711?text=${encodeURIComponent(message)}`);
+  goBack();
+}
 
-  function handleDeliveryOption() {
-    if (document.getElementById("delivery-option").value === "Delivery") {
-      customLocationInput.style.display = "block";
-      locationInfo.textContent = "Please provide your delivery location.";
-    } else {
-      customLocationInput.style.display = "none";
-      locationInfo.textContent = "";
-    }
-  }
+function goBack() {
+  productDetail.classList.remove("active");
+  document.getElementById("product-list").style.display = "grid";
+}
 
-  function addToCart() {
-    const needDateTime = document.getElementById("need-date-time").value;
-    const deliveryOption = document.getElementById("delivery-option").value;
-    const customLocation = customLocationInput.value;
-    
-    let message = `*Order Details*\n\nProduct: ${selectedProduct.name}\n`;
-    if (selectedDesign) {
-      message += `Design: ${selectedDesign.designNumber}\n`;
-    }
-    message += `Date & Time: ${needDateTime}\n`;
-    message += `Delivery Option: ${deliveryOption}`;
-    
-    if (deliveryOption === "Delivery") {
-      message += `\nLocation: ${customLocation}`;
-    }
-
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  }
-
-  function buyNow() {
-    addToCart();
-  }
-
-  function goBack() {
-    productDetail.classList.remove("active");
-    document.getElementById("product-list").style.display = "grid";
-  }
-</script>
+  </script>
 </body>
-  </html>
+</html>
