@@ -21,7 +21,8 @@
     .buy { background: #4caf50; color: white; }
     .back { background: #e91e63; color: white; }
     .datetime-label { margin-top: 1em; font-weight: bold; }
-    .datetime-input { padding: 0.5em; font-size: 1em; margin-top: 0.5em; }
+    .datetime-input, .delivery-select, .delivery-location { padding: 0.5em; font-size: 1em; margin-top: 0.5em; width: 100%; max-width: 300px; }
+    #location-info { margin-top: 1em; font-style: italic; color: #555; }
   </style>
 </head>
 <body>
@@ -35,6 +36,15 @@
     <div class="designs" id="designs"></div>
     <input type="file" id="custom-design" accept="image/*" onchange="uploadCustom()"><div class="datetime-label">When is it needed?</div>
 <input class="datetime-input" type="datetime-local" id="need-date-time" />
+
+<div class="datetime-label">Delivery Option</div>
+<select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
+  <option value="Takeaway">Takeaway</option>
+  <option value="Delivery">Delivery</option>
+</select>
+
+<div id="location-info"></div>
+<input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
 
 <div class="buttons">
   <button class="add" onclick="addToCart()">Add to Cart</button>
@@ -66,6 +76,8 @@
 
     const productList = document.getElementById("product-list");
     const productDetail = document.getElementById("product-detail");
+    const locationInfo = document.getElementById("location-info");
+    const customLocationInput = document.getElementById("custom-location");
 
     products.forEach((product, index) => {
       const div = document.createElement("div");
@@ -86,6 +98,8 @@
       const designContainer = document.getElementById("designs");
       designContainer.innerHTML = designs.map(d => `<img src="${d}" onclick="selectDesign(this)" />`).join("");
       document.getElementById("need-date-time").value = "";
+      document.getElementById("delivery-option").value = "Takeaway";
+      handleDeliveryOption();
     }
 
     function selectDesign(imgElement) {
@@ -106,6 +120,17 @@
       }
     }
 
+    function handleDeliveryOption() {
+      const option = document.getElementById("delivery-option").value;
+      if (option === "Takeaway") {
+        locationInfo.innerHTML = `Pickup Location: <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" target="_blank">View on Map</a>`;
+        customLocationInput.style.display = "none";
+      } else {
+        locationInfo.innerHTML = "Enter your address below:";
+        customLocationInput.style.display = "block";
+      }
+    }
+
     function getCurrentDateTime() {
       const now = new Date();
       return now.toLocaleString();
@@ -114,14 +139,18 @@
     function addToCart() {
       const currentTime = getCurrentDateTime();
       const needDateTime = document.getElementById("need-date-time").value;
-      alert(`${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}`);
+      const deliveryOption = document.getElementById("delivery-option").value;
+      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
+      alert(`${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
       goBack();
     }
 
     function buyNow() {
       const currentTime = getCurrentDateTime();
       const needDateTime = document.getElementById("need-date-time").value;
-      alert(`Buying ${selectedProduct.name}\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}`);
+      const deliveryOption = document.getElementById("delivery-option").value;
+      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
+      alert(`Buying ${selectedProduct.name}\nDesign: ${selectedDesign ? 'Attached' : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${deliveryOption}\nLocation: ${userLocation}`);
       goBack();
     }
 
@@ -130,4 +159,4 @@
       document.getElementById("product-list").style.display = "grid";
     }
   </script></body>
-</html>
+  </html>
