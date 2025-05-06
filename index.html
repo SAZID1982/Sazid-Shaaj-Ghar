@@ -145,4 +145,44 @@
     }
   }
 
-  function handleDelivery
+  function handleDeliveryOption() {
+    if (document.getElementById("delivery-option").value === "Delivery") {
+      customLocationInput.style.display = "block";
+      locationInfo.textContent = "Please provide your delivery location.";
+    } else {
+      customLocationInput.style.display = "none";
+      locationInfo.textContent = "";
+    }
+  }
+
+  function addToCart() {
+    const needDateTime = document.getElementById("need-date-time").value;
+    const deliveryOption = document.getElementById("delivery-option").value;
+    const customLocation = customLocationInput.value;
+    
+    let message = `*Order Details*\n\nProduct: ${selectedProduct.name}\n`;
+    if (selectedDesign) {
+      message += `Design: ${selectedDesign.designNumber}\n`;
+    }
+    message += `Date & Time: ${needDateTime}\n`;
+    message += `Delivery Option: ${deliveryOption}`;
+    
+    if (deliveryOption === "Delivery") {
+      message += `\nLocation: ${customLocation}`;
+    }
+
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  function buyNow() {
+    addToCart();
+  }
+
+  function goBack() {
+    productDetail.classList.remove("active");
+    document.getElementById("product-list").style.display = "grid";
+  }
+</script>
+</body>
+  </html>
