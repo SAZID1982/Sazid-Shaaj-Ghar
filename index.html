@@ -166,3 +166,16 @@
       sendOrderToWhatsApp(orderDetails);
       goBack();
     }
+
+    function buyNow() {
+      addToCart();
+      alert("Order placed successfully!");
+    }
+
+    function goBack() {
+      productDetail.classList.remove("active");
+      document.getElementById("product-list").style.display = "grid";
+    }
+  </script>
+</body>
+</html>
