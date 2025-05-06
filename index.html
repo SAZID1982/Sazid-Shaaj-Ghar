@@ -1,50 +1,100 @@
 <!DOCTYPE html><html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sazid Shaaj Ghar</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-    }
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #fff8f0; }
+    header { background: #e91e63; color: white; padding: 1em; text-align: center; }
+    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1em; padding: 1em; }
+    .product { background: white; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px #ddd; text-align: center; }
+    .buttons button { margin: 0.5em; padding: 0.5em 1em; border: none; border-radius: 5px; cursor: pointer; }
+    .add { background: #2196f3; color: white; }
+    .buy { background: #4caf50; color: white; }
+    #cart { position: fixed; right: 0; top: 0; background: #fff; width: 300px; height: 100%; padding: 1em; box-shadow: -2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; display: none; }
+    #cart.open { display: block; }
+    #cart h2 { margin-top: 0; }
+    .cart-item { border-bottom: 1px solid #ccc; padding: 0.5em 0; }
+    .form input, .form textarea { width: 100%; margin: 0.5em 0; padding: 0.5em; }
+    .form button { background: #e91e63; color: white; padding: 0.7em; border: none; width: 100%; }
+    #cart-toggle { position: fixed; right: 10px; bottom: 10px; padding: 1em; background: #e91e63; color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; }
   </style>
 </head>
-<body class="bg-pink-50 text-gray-800">
-  <!-- Header -->
-  <header class="bg-pink-100 shadow-md">
-    <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
-      <img src="https://scontent.xx.fbcdn.net/v/t1.6435-9/186468246_650935507035276_3899267925986518581_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=730e14&_nc_ohc=_YiERVDAPUEQ7kNvgHIClTo&_nc_ht=scontent.xx&oh=00_AfCp_J1ejGr0R-T7uvp-WqVYoFP7dfO1KMGsM5d3qWOKtw&oe=66699999" alt="Sazid Shaaj Ghar Logo" class="h-16">
-      <h1 class="text-3xl font-bold text-pink-700">Sazid Shaaj Ghar</h1>
+<body>
+  <header>
+    <h1>Sazid Shaaj Ghar</h1>
+    <p>Event Management & Flower Decoration</p>
+  </header>
+  <section class="products" id="product-list">
+    <!-- Products will be inserted here -->
+  </section><button id="cart-toggle">🛒</button>
+
+  <div id="cart">
+    <h2>আপনার অর্ডার</h2>
+    <div id="cart-items"></div>
+    <div class="form">
+      <input type="text" id="name" placeholder="আপনার নাম" required>
+      <input type="tel" id="phone" placeholder="ফোন নম্বর" required>
+      <textarea id="address" placeholder="ঠিকানা"></textarea>
+      <button onclick="submitOrder()">অর্ডার পাঠান</button>
     </div>
-  </header>  <!-- Hero Section -->  <section class="bg-pink-200 text-center py-12">
-    <h2 class="text-4xl font-bold text-pink-900 mb-4">আপনার স্বপ্নের সাজ ও আয়োজন</h2>
-    <p class="text-lg text-pink-800">বাসরঘর, স্টেজ সাজানো, ফুল বিক্রয় ও ইভেন্ট ম্যানেজমেন্ট</p>
-  </section>  <!-- Products Section -->  <section class="max-w-7xl mx-auto py-12 px-4">
-    <h3 class="text-2xl font-semibold text-pink-800 mb-6 text-center">আমাদের পণ্যসমূহ</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white rounded-xl shadow-md p-4 text-center">
-        <img src="https://via.placeholder.com/300x200.png?text=%E0%A6%AC%E0%A6%BE%E0%A6%B8%E0%A6%B0%E0%A6%98%E0%A6%B0" alt="বাসরঘর" class="rounded-md mb-4 mx-auto">
-        <h4 class="text-xl font-bold text-pink-700">বাসরঘর সাজ</h4>
-        <button class="bg-pink-600 text-white px-4 py-2 mt-2 rounded hover:bg-pink-700">Buy Now</button>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-4 text-center">
-        <img src="https://via.placeholder.com/300x200.png?text=%E0%A6%B8%E0%A7%8D%E0%A6%9F%E0%A7%87%E0%A6%9C" alt="স্টেজ" class="rounded-md mb-4 mx-auto">
-        <h4 class="text-xl font-bold text-pink-700">স্টেজ সাজ</h4>
-        <button class="bg-pink-600 text-white px-4 py-2 mt-2 rounded hover:bg-pink-700">Add to Cart</button>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-4 text-center">
-        <img src="https://via.placeholder.com/300x200.png?text=%E0%A6%AB%E0%A7%81%E0%A6%B2" alt="ফুল" class="rounded-md mb-4 mx-auto">
-        <h4 class="text-xl font-bold text-pink-700">তাজা ফুল</h4>
-        <button class="bg-pink-600 text-white px-4 py-2 mt-2 rounded hover:bg-pink-700">Buy Now</button>
-      </div>
-    </div>
-  </section>  <!-- Contact Section -->  <section class="bg-pink-100 py-8 text-center">
-    <h3 class="text-2xl font-bold text-pink-800 mb-4">যোগাযোগ করুন</h3>
-    <p class="text-lg">ফোন: 01840117711, 01814-264206, 01873-337373</p>
-    <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" class="text-pink-600 underline block mt-2">লোকেশন দেখুন</a>
-  </section>  <!-- Footer -->  <footer class="bg-pink-900 text-white text-center p-4">
-    &copy; 2025 Sazid Shaaj Ghar. সর্বস্বত্ব সংরক্ষিত।
-  </footer>
-</body>
-</html>
+  </div>  <script>
+    const products = ["বাসরঘর", "স্টেজ", "ফুল", "তোরা", "গাড়ি", "মালা", "ফুলের ঝুড়ি", "ইভেন্ট ম্যানেজমেন্ট", "গায়ে হলুদ", "বার্থডে"];
+    const cart = [];
+
+    const productList = document.getElementById("product-list");
+    products.forEach(name => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <h3>${name}</h3>
+        <div class="buttons">
+          <button class="add" onclick="addToCart('${name}')">Add to Cart</button>
+          <button class="buy" onclick="buyNow('${name}')">Buy Now</button>
+        </div>
+      `;
+      productList.appendChild(div);
+    });
+
+    function addToCart(name) {
+      cart.push(name);
+      alert(`${name} কার্টে যোগ করা হয়েছে`);
+      updateCart();
+    }
+
+    function buyNow(name) {
+      cart.length = 0;
+      cart.push(name);
+      document.getElementById("cart").classList.add("open");
+      updateCart();
+    }
+
+    function updateCart() {
+      const container = document.getElementById("cart-items");
+      container.innerHTML = cart.map(item => `<div class='cart-item'>${item}</div>`).join("");
+    }
+
+    document.getElementById("cart-toggle").onclick = () => {
+      document.getElementById("cart").classList.toggle("open");
+      updateCart();
+    };
+
+    function submitOrder() {
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+      const orderDetails = cart.join(", ");
+
+      if (!name || !phone) return alert("নাম ও ফোন নম্বর দিন");
+
+      // EmailJS Placeholder
+      alert(`অর্ডার সফলভাবে পাঠানো হয়েছে!\n\nনাম: ${name}\nফোন: ${phone}\nপণ্য: ${orderDetails}`);
+
+      // Reset
+      cart.length = 0;
+      updateCart();
+      document.getElementById("cart").classList.remove("open");
+      document.querySelector(".form").reset();
+    }
+  </script></body>
+        </html>
