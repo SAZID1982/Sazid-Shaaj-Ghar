@@ -1,23 +1,36 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sazid Shaaj Ghar</title>
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; background: #fff8f0; }
-    header { background: #e91e63; color: white; padding: 1em; text-align: center; }
-    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1em; padding: 1em; }
-    .product { background: white; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px #ddd; text-align: center; }
-    .buttons button { margin: 0.5em; padding: 0.5em 1em; border: none; border-radius: 5px; cursor: pointer; }
+    body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+    header { background: #e91e63; color: white; padding: 1.5em; text-align: center; font-size: 1.5em; }
+    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2em; padding: 2em; }
+    .product { background: #fff; padding: 1.5em; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+    .product:hover { transform: scale(1.05); }
+    .product img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1em; }
+    .product h3 { margin: 0.5em 0; font-size: 1.2em; color: #333; }
+    .design-select { display: flex; justify-content: center; gap: 1em; margin-bottom: 1em; }
+    .design-select img { width: 60px; height: 60px; border-radius: 8px; cursor: pointer; transition: border 0.3s; }
+    .design-select img:hover { border: 3px solid #e91e63; }
+    .buttons button { margin-top: 1em; padding: 1em 2em; border-radius: 5px; font-size: 1em; border: none; cursor: pointer; }
     .add { background: #2196f3; color: white; }
     .buy { background: #4caf50; color: white; }
-    #cart { position: fixed; right: 0; top: 0; background: #fff; width: 300px; height: 100%; padding: 1em; box-shadow: -2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; display: none; }
-    #cart.open { display: block; }
-    #cart h2 { margin-top: 0; }
-    .cart-item { border-bottom: 1px solid #ccc; padding: 0.5em 0; }
-    .form input, .form textarea { width: 100%; margin: 0.5em 0; padding: 0.5em; }
-    .form button { background: #e91e63; color: white; padding: 0.7em; border: none; width: 100%; }
-    #cart-toggle { position: fixed; right: 10px; bottom: 10px; padding: 1em; background: #e91e63; color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; }
+    select, input, textarea { width: 100%; padding: 0.75em; margin: 0.5em 0; border: 1px solid #ccc; border-radius: 5px; }
+    .buttons button:hover { opacity: 0.8; }
+    #cart { position: fixed; top: 0; right: -100%; width: 300px; height: 100%; background: #fff; padding: 1em; box-shadow: -4px 0 12px rgba(0,0,0,0.1); transition: right 0.3s ease-in-out; }
+    #cart.open { right: 0; }
+    #cart h2 { font-size: 1.5em; margin-top: 0; }
+    .cart-item { padding: 1em 0; border-bottom: 1px solid #ccc; }
+    #cart-toggle { position: fixed; right: 10px; bottom: 10px; background: #e91e63; color: white; padding: 1em; border-radius: 50%; font-size: 24px; cursor: pointer; }
+    #back-button { background: #e91e63; color: white; padding: 0.8em; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+    .form input, .form textarea { width: 100%; margin: 0.5em 0; padding: 0.75em; }
+    .form button { background: #e91e63; color: white; padding: 1em; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+    .form button:hover { opacity: 0.8; }
+    .product-details { display: flex; flex-direction: column; align-items: center; }
+    .product-details img { width: 70%; height: auto; margin-bottom: 1em; }
   </style>
 </head>
 <body>
@@ -25,11 +38,13 @@
     <h1>Sazid Shaaj Ghar</h1>
     <p>Event Management & Flower Decoration</p>
   </header>
-  <section class="products" id="product-list">
-    <!-- Products will be inserted here -->
-  </section><button id="cart-toggle">🛒</button>
+
+  <section class="products" id="product-list"></section>
+
+  <button id="cart-toggle">🛒</button>
 
   <div id="cart">
+    <button id="back-button" onclick="closeCart()">← Back to Products</button>
     <h2>আপনার অর্ডার</h2>
     <div id="cart-items"></div>
     <div class="form">
@@ -38,33 +53,84 @@
       <textarea id="address" placeholder="ঠিকানা"></textarea>
       <button onclick="submitOrder()">অর্ডার পাঠান</button>
     </div>
-  </div>  <script>
-    const products = ["বাসরঘর", "স্টেজ", "ফুল", "তোরা", "গাড়ি", "মালা", "ফুলের ঝুড়ি", "ইভেন্ট ম্যানেজমেন্ট", "গায়ে হলুদ", "বার্থডে"];
-    const cart = [];
+  </div>
 
+  <script>
+    const products = [
+      { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=বাসরঘর", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=স্টেজ", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "ফুল", img: "https://via.placeholder.com/300x200?text=ফুল", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "তোরা", img: "https://via.placeholder.com/300x200?text=তোরা", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=গাড়ি", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "মালা", img: "https://via.placeholder.com/300x200?text=মালা", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=ফুলের+ঝুড়ি", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=ইভেন্ট+ম্যানেজমেন্ট", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=গায়ে+হলুদ", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] },
+      { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=বার্থডে", designs: ["https://via.placeholder.com/100?text=ডিজাইন+১", "https://via.placeholder.com/100?text=ডিজাইন+২", "https://via.placeholder.com/100?text=ডিজাইন+৩"] }
+    ];
+
+    const cart = [];
     const productList = document.getElementById("product-list");
-    products.forEach(name => {
+
+    products.forEach(({ name, img, designs }) => {
       const div = document.createElement("div");
       div.className = "product";
       div.innerHTML = `
+        <img src="${img}" alt="${name}" />
         <h3>${name}</h3>
+        <div class="design-select">
+          ${designs.map((design, index) => `
+            <img src="${design}" alt="Design ${index+1}" onclick="selectDesign('${name}', '${design}')"/>
+          `).join("")}
+        </div>
         <div class="buttons">
           <button class="add" onclick="addToCart('${name}')">Add to Cart</button>
           <button class="buy" onclick="buyNow('${name}')">Buy Now</button>
+        </div>
+        <div class="upload">
+          <input type="file" id="${name}-upload" accept="image/*" onchange="uploadCustomDesign('${name}')">
+          <button onclick="uploadCustomDesign('${name}')">Give Your Own Design</button>
         </div>
       `;
       productList.appendChild(div);
     });
 
+    function selectDesign(name, design) {
+      document.getElementById(name + "-selected-design")?.remove();
+      const selectedDesignDiv = document.createElement("div");
+      selectedDesignDiv.id = name + "-selected-design";
+      selectedDesignDiv.innerHTML = `<strong>Selected Design:</strong> <img src="${design}" alt="${name}" />`;
+      document.querySelector(`[onclick="addToCart('${name}')"]`).parentElement.appendChild(selectedDesignDiv);
+    }
+
+    function uploadCustomDesign(name) {
+      const fileInput = document.getElementById(`${name}-upload`);
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById(name + "-selected-design")?.remove();
+          const selectedDesignDiv = document.createElement("div");
+          selectedDesignDiv.id = name + "-selected-design";
+          selectedDesignDiv.innerHTML = `<strong>Selected Custom Design:</strong> <img src="${event.target.result}" alt="${name}" />`;
+          document.querySelector(`[onclick="addToCart('${name}')"]`).parentElement.appendChild(selectedDesignDiv);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function addToCart(name) {
-      cart.push(name);
-      alert(`${name} কার্টে যোগ করা হয়েছে`);
+      const design = document.querySelector(`#${name}-selected-design img`)?.src || "No Design Selected";
+      cart.push(`${name} (${design})`);
+      alert(`${name} added to cart with the selected design.`);
       updateCart();
     }
 
     function buyNow(name) {
+      const design = document.querySelector(`#${name}-selected-design img`)?.src || "No Design Selected";
       cart.length = 0;
-      cart.push(name);
+      cart.push(`${name} (${design})`);
       document.getElementById("cart").classList.add("open");
       updateCart();
     }
@@ -79,22 +145,26 @@
       updateCart();
     };
 
+    function closeCart() {
+      document.getElementById("cart").classList.remove("open");
+    }
+
     function submitOrder() {
       const name = document.getElementById("name").value;
       const phone = document.getElementById("phone").value;
       const address = document.getElementById("address").value;
       const orderDetails = cart.join(", ");
+      
+      if (!name || !phone) return alert("Please provide your name and phone number.");
 
-      if (!name || !phone) return alert("নাম ও ফোন নম্বর দিন");
-
-      // EmailJS Placeholder
-      alert(`অর্ডার সফলভাবে পাঠানো হয়েছে!\n\nনাম: ${name}\nফোন: ${phone}\nপণ্য: ${orderDetails}`);
-
-      // Reset
+      alert(`Order successfully submitted!\\n\\nName: ${name}\\nPhone: ${phone}\\nProducts: ${orderDetails}`);
       cart.length = 0;
       updateCart();
       document.getElementById("cart").classList.remove("open");
-      document.querySelector(".form").reset();
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
     }
-  </script></body>
-        </html>
+  </script>
+</body>
+</html>
