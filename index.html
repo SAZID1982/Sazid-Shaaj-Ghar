@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sazid Shaaj Ghar</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fdfdfd; }
@@ -15,11 +15,13 @@
     .product h3 { margin: 0.5em 0; color: #333; }
     .product-detail { display: none; grid-template-columns: 1fr; text-align: center; }
     .product-detail.active { display: grid; }
-    .designs { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 1em; }
+    .designs-label { font-weight: bold; margin-top: 1em; }
+    .designs { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 0.5em; }
     .designs img { width: 80px; height: 80px; margin: 0.5em; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
     .designs img:hover { transform: scale(1.05); }
     .designs img.selected { border-color: #e91e63; }
-    .buttons { margin-top: 1em; }
+    .upload-label { margin-top: 1em; font-weight: bold; }
+    .buttons { margin-top: 1.5em; }
     .buttons button { padding: 0.8em 1.5em; margin: 0.5em; border: none; border-radius: 5px; font-size: 1em; cursor: pointer; transition: background 0.3s; }
     .add { background: #2196f3; color: white; }
     .add:hover { background: #1e88e5; }
@@ -27,9 +29,8 @@
     .buy:hover { background: #43a047; }
     .back { background: #e91e63; color: white; }
     .back:hover { background: #d81b60; }
-    .datetime-label { margin-top: 1em; font-weight: bold; }
-    .datetime-input, .delivery-select, .delivery-location { padding: 0.5em; font-size: 1em; margin-top: 0.5em; width: 100%; max-width: 300px; }
-    #location-info { margin-top: 1em; font-style: italic; color: #555; }
+    .datetime-label, .delivery-label, #location-info { margin-top: 1em; font-weight: bold; }
+    .datetime-input, .delivery-select, .delivery-location { padding: 0.5em; font-size: 1em; margin-top: 0.5em; width: 100%; max-width: 300px; border-radius: 5px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -37,134 +38,80 @@
     <h1>Sazid Shaaj Ghar</h1>
     <p>Event Management & Flower Decoration</p>
   </header>
+
   <section class="products" id="product-list"></section>
+
   <section class="product-detail" id="product-detail">
     <button class="back" onclick="goBack()">← Back</button>
     <h2 id="detail-title"></h2>
-    <img id="detail-image" src="" alt="Product" style="width:100%; max-width:400px; margin:auto;">
+    <img id="detail-image" src="" alt="Product" style="width:100%; max-width:400px; margin:auto; border-radius:10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+    <div class="designs-label" id="designs-label" style="display:none;">Select a Design:</div>
     <div class="designs" id="designs"></div>
+
+    <div class="upload-label">Or Upload Your Own Design:</div>
     <input type="file" id="custom-design" accept="image/*" onchange="uploadCustom()">
-    <div class="datetime-label">When is it needed?</div>
-    <input class="datetime-input" type="datetime-local" id="need-date-time" /><div class="datetime-label">Delivery Option</div>
-<select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
-  <option value="Takeaway">Takeaway</option>
-  <option value="Delivery">Delivery</option>
-</select>
 
-<div id="location-info"></div>
-<input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
+    <div class="datetime-label">When is this needed?</div>
+    <input class="datetime-input" type="datetime-local" id="need-date-time" />
 
-<div class="buttons">
-  <button class="add" onclick="addToCart()">Add to Cart</button>
-  <button class="buy" onclick="buyNow()">Buy Now</button>
-</div>
+    <div class="delivery-label">Delivery Option:</div>
+    <select class="delivery-select" id="delivery-option" onchange="handleDeliveryOption()">
+      <option value="Takeaway">Takeaway (Pickup)</option>
+      <option value="Delivery">Delivery</option>
+    </select>
 
-  </section>  
-  <script>
-    const products = [
-      { name: "বাসরঘর", img: "https://via.placeholder.com/300x200?text=Decor+Wedding" },
-      { name: "স্টেজ", img: "https://via.placeholder.com/300x200?text=Stage+Decoration" },
-      { name: "ফুল", img: "https://via.placeholder.com/300x200?text=Flower+Arrangement" },
-      { name: "তোরা", img: "https://via.placeholder.com/300x200?text=Torah+Decoration" },
-      { name: "গাড়ি", img: "https://via.placeholder.com/300x200?text=Car+Decoration" },
-      { name: "মালা", img: "https://via.placeholder.com/300x200?text=Mala+Decoration" },
-      { name: "ফুলের ঝুড়ি", img: "https://via.placeholder.com/300x200?text=Flower+Basket" },
-      { name: "ইভেন্ট ম্যানেজমেন্ট", img: "https://via.placeholder.com/300x200?text=Event+Management" },
-      { name: "গায়ে হলুদ", img: "https://via.placeholder.com/300x200?text=Gaye+Holud" },
-      { name: "বার্থডে", img: "https://via.placeholder.com/300x200?text=Birthday+Decoration" }
-    ];
+    <div id="location-info"></div>
+    <input class="delivery-location" type="text" id="custom-location" placeholder="Enter your delivery location" style="display:none;" />
 
-    const stageDesigns = [
-      "https://via.placeholder.com/100x100?text=Design+1",
-      "https://via.placeholder.com/100x100?text=Design+2",
-      "https://via.placeholder.com/100x100?text=Design+3",
-      "https://via.placeholder.com/100x100?text=Design+4",
-      "https://via.placeholder.com/100x100?text=Design+5"
-    ];
+    <div class="buttons">
+      <button class="add" onclick="addToCart()">Add to Cart</button>
+      <button class="buy" onclick="buyNow()">Buy Now</button>
+    </div>
+  </section>
 
-    let selectedProduct = null;
-    let selectedDesign = null;
+<script>
+  const products = [
+    { name: "বাসরঘর (Wedding Room)", img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
+    { name: "স্টেজ (Stage)", img: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" },
+    { name: "ফুল (Flower Arrangement)", img: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=400&q=80" },
+    { name: "তোরা (Torah Decoration)", img: "https://images.unsplash.com/photo-1542206395-9feb3edaa68f?auto=format&fit=crop&w=400&q=80" },
+    { name: "গাড়ি (Car Decoration)", img: "https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=400&q=80" },
+    { name: "মালা (Mala Decoration)", img: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80" },
+    { name: "ফুলের ঝুড়ি (Flower Basket)", img: "https://images.unsplash.com/photo-1523301343968-62d4a9e16410?auto=format&fit=crop&w=400&q=80" },
+    { name: "ইভেন্ট ম্যানেজমেন্ট (Event Management)", img: "https://images.unsplash.com/photo-1486308510493-cb130f4b6c1d?auto=format&fit=crop&w=400&q=80" },
+    { name: "গায়ে হলুদ (Gaye Holud)", img: "https://images.unsplash.com/photo-1543340713-8a8a15af1087?auto=format&fit=crop&w=400&q=80" },
+    { name: "বার্থডে (Birthday Decoration)", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" }
+  ];
 
-    const productList = document.getElementById("product-list");
-    const productDetail = document.getElementById("product-detail");
-    const locationInfo = document.getElementById("location-info");
-    const customLocationInput = document.getElementById("custom-location");
+  const stageDesigns = [
+    "https://via.placeholder.com/100x100?text=Design+1",
+    "https://via.placeholder.com/100x100?text=Design+2",
+    "https://via.placeholder.com/100x100?text=Design+3",
+    "https://via.placeholder.com/100x100?text=Design+4",
+    "https://via.placeholder.com/100x100?text=Design+5"
+  ];
 
-    products.forEach((product, index) => {
-      const div = document.createElement("div");
-      div.className = "product";
-      div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
-      div.onclick = () => showProduct(index);
-      productList.appendChild(div);
-    });
+  let selectedProduct = null;
+  let selectedDesign = null;
 
-    function showProduct(index) {
-      selectedProduct = products[index];
-      selectedDesign = null;
-      document.getElementById("detail-title").innerText = selectedProduct.name;
-      document.getElementById("detail-image").src = selectedProduct.img;
-      document.getElementById("product-list").style.display = "none";
-      productDetail.classList.add("active");
+  const productList = document.getElementById("product-list");
+  const productDetail = document.getElementById("product-detail");
+  const locationInfo = document.getElementById("location-info");
+  const customLocationInput = document.getElementById("custom-location");
+  const designsLabel = document.getElementById("designs-label");
 
-      const designContainer = document.getElementById("designs");
-      const designList = selectedProduct.name === "স্টেজ" ? stageDesigns : [];
-      designContainer.innerHTML = designList.map((d, i) => `<img src="${d}" onclick="selectDesign(this)" data-design="${i+1}" />`).join("");
+  // Show products grid
+  products.forEach((product, index) => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `<img src="${product.img}" alt="${product.name}" /><h3>${product.name}</h3>`;
+    div.onclick = () => showProduct(index);
+    productList.appendChild(div);
+  });
 
-      document.getElementById("need-date-time").value = "";
-      document.getElementById("delivery-option").value = "Takeaway";
-      handleDeliveryOption();
-    }
-
-    function selectDesign(imgElement) {
-      document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
-      imgElement.classList.add("selected");
-      selectedDesign = imgElement.dataset.design;
-    }
-
-    function uploadCustom() {
-      const file = document.getElementById("custom-design").files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          selectedDesign = e.target.result;
-          document.querySelectorAll(".designs img").forEach(img => img.classList.remove("selected"));
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function handleDeliveryOption() {
-      const option = document.getElementById("delivery-option").value;
-      if (option === "Takeaway") {
-        locationInfo.innerHTML = `Pickup Location: <a href="https://maps.app.goo.gl/aW1tMgSrNxHXWh9y8" target="_blank">View on Map</a>`;
-        customLocationInput.style.display = "none";
-      } else {
-        locationInfo.innerHTML = "Enter your address below:";
-        customLocationInput.style.display = "block";
-      }
-    }
-
-    function getCurrentDateTime() {
-      const now = new Date();
-      return now.toLocaleString();
-    }
-
-    function addToCart() {
-      const currentTime = getCurrentDateTime();
-      const needDateTime = document.getElementById("need-date-time").value;
-      const deliveryOption = document.getElementById("delivery-option").value;
-      const userLocation = deliveryOption === "Delivery" ? document.getElementById("custom-location").value : "Pickup at store";
-      alert(`${selectedProduct.name} added to cart.\nDesign: ${selectedDesign ? 'Design ' + selectedDesign : 'None'}\nOrdered: ${currentTime}\nNeeded on: ${needDateTime || 'Not specified'}\nDelivery: ${userLocation}`);
-    }
-
-    function buyNow() {
-      addToCart();
-    }
-
-    function goBack() {
-      document.getElementById("product-list").style.display = "grid";
-      productDetail.classList.remove("active");
-    }
-  </script>
-</body>
-</html>
+  function showProduct(index) {
+    selectedProduct = products[index];
+    selectedDesign = null;
+    document.getElementById("detail-title").innerText = selectedProduct.name;
+    document.getElementBy
